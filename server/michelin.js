@@ -1,41 +1,29 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-/**
- * Parse webpage restaurant
- * @param  {String} data - html response
- * @return {Object} restaurant
- */
-const parse = data => {
-  const $ = cheerio.load(data);
-  const name = $('.section-main h2.restaurant-details__heading--title').text();
-  const experience = $('#experience-section > ul > li:nth-child(2)').text();
+let restaurantsMichelin = [];
 
-  return {name, experience};
-};
+async function get_restaurant() 
+{
+   const result  = axios.get('http://apir.viamichelin.com/apir/2/findPOI.json2/RESTAURANT/fra?&&filter=bib_gourmand%20eq%201&source=RESGR&charset=UTF-8&ie=UTF-8', {
+    params: {
+      authKey: "RESTGP20200121150019479872542554",
+      center:"2.3488:48.8534",
+      dist: 200000,
+      nb: 100
+    }
+  })
+  .then(function (response) {
+    response.data.poiList.forEach(element => {
+      restaurantsMichelin.push(element.datasheets[0]['name']);
+    });
+  })
+  .catch(function (error) {
+   return -1;
+  })
+}
 
-/**
- * Scrape a given restaurant url
- * @param  {String}  url
- * @return {Object} restaurant
- */
-module.exports.scrapeRestaurant = async url => {
-  const response = await axios(url);
-  const {data, status} = response;
-
-  if (status >= 200 && status < 300) {
-    return parse(data);
-  }
-
-  console.error(status);
-
-  return null;
-};
-
-/**
- * Get all France located Bib Gourmand restaurants
- * @return {Array} restaurants
- */
 module.exports.get = () => {
-  return [];
+  get_restaurant();
+  return restaurantsMichelin;
 };

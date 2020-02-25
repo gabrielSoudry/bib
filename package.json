@@ -6,7 +6,8 @@
   "repository": "git@github.com:92bondstreet/bib.git",
   "dependencies": {
     "axios": "^0.19.1",
-    "cheerio": "^1.0.0-rc.3"
+    "cheerio": "^1.0.0-rc.3",
+    "querystring": "^0.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
